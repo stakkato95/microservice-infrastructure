@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stakkato95/gin-propagate-xheaders/middleware"
 	"github.com/stakkato95/service-engineering-microservice-infrastructure/middle/dto"
 )
 
@@ -12,13 +13,12 @@ type Handler struct {
 }
 
 func (h *Handler) getRequest(ctx *gin.Context) {
-	xheaders := GetXHeaders(ctx)
-
 	req, err := http.NewRequest("GET", "http://backend-1/request", nil)
 	if err != nil {
 		errorResponse(ctx, err)
 		return
 	}
+	xheaders := middleware.GetXHeaders(ctx)
 	req.Header = xheaders
 
 	var res *http.Response

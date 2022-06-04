@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Jun 04 14:00:25 2022
+# Make data base, printed on Sat Jun 04 15:42:54 2022
 
 # Variables
 
@@ -23,12 +23,11 @@ USERPROFILE = C:\Users\stakk
 # environment
 LOCALAPPDATA = C:\Users\stakk\AppData\Local
 # environment
-VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-53e68930-5e21-4c8c-aaa0-c9d3597df74c-sock
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-2be69119-8d38-4147-8081-010ec975453c-sock
 # environment
 WSLENV = WT_SESSION::WT_PROFILE_ID
 # environment
-VSCODE_CWD = C:\Users\stakk\Documents\fh\ma 
-ster\2\service\service-engineering-microservice-infrastructure
+VSCODE_CWD = C:\Users\stakk\Documents\fh\master\2\service\service-engineering-microservice-infrastructure
 # environment
 CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
 # environment
@@ -149,7 +148,7 @@ CHOCOLATEYLASTPATHUPDATE = 132946754099002331
 # environment
 GRADLE_HOME = C:\ProgramData\chocolatey\lib\gradle\tools\gradle-7.4
 # environment
-WT_SESSION = 011d7e76-a3ff-4f24-a5bc-104e2d715bdb
+WT_SESSION = 5d58e806-7f14-4092-bf50-4e73d0a03e18
 # environment
 LOGONSERVER = \\LAPTOP-D013Q1O1
 # environment
@@ -182,8 +181,7 @@ NVM_HOME = C:\ProgramData\nvm
 MAKE_VERSION := 4.3
 # environment
 PROGRAMFILES(X86) = C:\Program Files (x86)
-# environment 
-
+# environment
 USERDOMAIN_ROAMINGPROFILE = LAPTOP-D013Q1O1
 # environment
 NUMBER_OF_PROCESSORS = 8
@@ -304,6 +302,6 @@ stats:
 # strcache performance: lookups = 20 / hit rate = 15%
 # hash-table stats:
 # Load=17/8192=0%, Rehash=0, Collisions=0/20=0%
-# Finished Make data base on Sat Jun 04 14:00:25 2022
+# Finished Make data base on Sat Jun 04 15:42:54 2022
 
  
