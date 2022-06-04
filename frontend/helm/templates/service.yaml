@@ -12,4 +12,4 @@ spec:
       port: {{ .Values.service.http.port }}
       protocol: TCP
   selector:
-    {{- include "helm.selectorLabels" . | nindent 4 }}
+    {{- include "helm.matchLabels" . | nindent 4 }}

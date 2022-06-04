@@ -10,7 +10,7 @@ Common labels
 */}}
 {{- define "helm.labels" -}}
 helm.sh/chart: {{ include "helm.chart" . }}
-{{ include "helm.selectorLabels" . }}
+{{ include "helm.matchLabels" . }}
 app.kubernetes.io/version: {{ .Values.app.version | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
@@ -18,8 +18,14 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
+{{- define "helm.matchLabels" -}}
+app: {{ .Chart.Name }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
 {{- define "helm.selectorLabels" -}}
-app.kubernetes.io/name: {{ .Chart.Name }}
-app.kubernetes.io/instance: {{ .Chart.Name }}
-# one of these two (name, instance) would be enough
+{{ include "helm.matchLabels" . }}
+version: {{ .Values.app.version }}
 {{- end }}
