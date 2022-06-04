@@ -1,0 +1,16 @@
+image:
+  repository: stakkato95/microservice-infrastructure-frontend
+  pullPolicy: Always
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  http:
+    name: http
+    port: 80
+
+ingress:
+  enabled: true

@@ -1,0 +1,11 @@
+GET http://localhost:{{port}}{{pathPrefix}}/tweets/1
+
+###
+
+POST http://localhost:{{port}}{{pathPrefix}}/tweets
+Content-Type: application/json
+
+{
+    "text": "tweet text",
+    "userId": 1
+}
