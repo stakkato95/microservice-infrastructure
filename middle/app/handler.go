@@ -1,13 +1,12 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stakkato95/service-engineering-go-lib/logger"
-	"github.com/stakkato95/service-engineering-microservice-infrastructure/frontend/dto"
+	"github.com/stakkato95/service-engineering-microservice-infrastructure/middle/dto"
 )
 
 type Handler struct {
@@ -39,32 +38,22 @@ func (h *Handler) getRequest(ctx *gin.Context) {
 	tHeaders := telemetryHeaders{}
 
 	if err := ctx.ShouldBindHeader(&tHeaders); err != nil {
-		errorResponse(ctx, err)
+		ctx.JSON(http.StatusOK, err)
 	}
 
 	logger.Info(fmt.Sprintf("%v", tHeaders))
 
-	req, err := http.NewRequest("GET", "http://localhost:8081/request", nil)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-	req.Header = tHeaders.ToHeaders()
+	// req, err := http.NewRequest("GET", "http://test", nil)
+	// if err != nil {
+	// 	errorResponse(ctx, err)
+	// 	return
+	// }
+	// req.Header = tHeaders.ToHeaders()
 
-	var res *http.Response
-	res, err = http.DefaultClient.Do(req)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
+	// var res *http.Response
+	// res, err = http.DefaultClient.Do(req)
 
-	var responseDto dto.MiddleResponse
-	if err := json.NewDecoder(res.Body).Decode(&responseDto); err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: responseDto})
+	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: tHeaders.X_request_id})
 }
 
 func errorResponse(ctx *gin.Context, err error) {

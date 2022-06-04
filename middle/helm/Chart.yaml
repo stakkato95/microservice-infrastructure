@@ -1,0 +1,17 @@
+apiVersion: v2
+name: microservice-infrastructure-middle
+description: A Helm chart for a simple service
+
+home: https://github.com/stakkato95/service-engineering-simple-twitter
+
+maintainers:
+  - name: Artsiom Kaliaha
+    email: stakkato95@gmail.com
+
+type: application
+
+# Chart version. Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# Application version
+appVersion: "0.1.0"

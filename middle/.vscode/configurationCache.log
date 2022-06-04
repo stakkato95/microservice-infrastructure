@@ -1,0 +1,1 @@
+{"buildTargets":[".PHONY","build","clear","docker-build-image","docker-local-container","docker-push-image","docker-run-tmp-container","run-with-env","test"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
