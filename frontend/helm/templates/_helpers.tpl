@@ -27,5 +27,5 @@ Selector labels
 */}}
 {{- define "helm.selectorLabels" -}}
 {{ include "helm.matchLabels" . }}
-version: {{ .Values.app.version }}
+version: {{ .Values.app.version | quote }}
 {{- end }}

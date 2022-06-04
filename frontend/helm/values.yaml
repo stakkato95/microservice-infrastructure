@@ -1,5 +1,5 @@
 app:
-  version: "0.1.0"
+  version: "old"
 
 image:
   repository: stakkato95/microservice-infrastructure-frontend
