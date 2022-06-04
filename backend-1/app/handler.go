@@ -1,11 +1,10 @@
 package app
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stakkato95/service-engineering-microservice-infrastructure/frontend/dto"
+	"github.com/stakkato95/service-engineering-microservice-infrastructure/backend-1/dto"
 )
 
 type Handler struct {
@@ -37,33 +36,12 @@ func (h *Handler) getRequest(ctx *gin.Context) {
 	tHeaders := telemetryHeaders{}
 
 	if err := ctx.ShouldBindHeader(&tHeaders); err != nil {
-		errorResponse(ctx, err)
-	}
-
-	req, err := http.NewRequest("GET", "http://middle/request", nil)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-	req.Header = tHeaders.ToHeaders()
-
-	var res *http.Response
-	res, err = http.DefaultClient.Do(req)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-
-	var nestedResponseDto dto.ServiceResponseDto
-	if err := json.NewDecoder(res.Body).Decode(&nestedResponseDto); err != nil {
-		errorResponse(ctx, err)
-		return
+		ctx.JSON(http.StatusOK, err)
 	}
 
 	ctx.JSON(http.StatusOK, dto.ServiceResponseDto{
-		Service:      "frontend",
+		Service:      "backend-1",
 		X_request_id: tHeaders.X_request_id,
-		Nested:       nestedResponseDto,
 	})
 }
 

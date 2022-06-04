@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: {{ .Values.service.http.name }}-service
+      targetPort: {{ .Values.service.http.name }}-container
+      port: {{ .Values.service.http.port }}
+      protocol: TCP
+  selector:
+    {{- include "helm.selectorLabels" . | nindent 4 }}

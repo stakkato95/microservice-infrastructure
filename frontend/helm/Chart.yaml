@@ -1,8 +1,8 @@
 apiVersion: v2
-name: microservice-infrastructure-frontend
+name: frontend
 description: A Helm chart for a simple service
 
-home: https://github.com/stakkato95/service-engineering-simple-twitter
+home: github.com/stakkato95/service-engineering-microservice-infrastructure
 
 maintainers:
   - name: Artsiom Kaliaha

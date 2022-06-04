@@ -1,11 +1,10 @@
 package app
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/service-engineering-microservice-infrastructure/middle/dto"
 )
 
@@ -41,19 +40,31 @@ func (h *Handler) getRequest(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, err)
 	}
 
-	logger.Info(fmt.Sprintf("%v", tHeaders))
+	req, err := http.NewRequest("GET", "http://backend-1/request", nil)
+	if err != nil {
+		errorResponse(ctx, err)
+		return
+	}
+	req.Header = tHeaders.ToHeaders()
 
-	// req, err := http.NewRequest("GET", "http://test", nil)
-	// if err != nil {
-	// 	errorResponse(ctx, err)
-	// 	return
-	// }
-	// req.Header = tHeaders.ToHeaders()
+	var res *http.Response
+	res, err = http.DefaultClient.Do(req)
+	if err != nil {
+		errorResponse(ctx, err)
+		return
+	}
 
-	// var res *http.Response
-	// res, err = http.DefaultClient.Do(req)
+	var nestedResponseDto dto.ServiceResponseDto
+	if err := json.NewDecoder(res.Body).Decode(&nestedResponseDto); err != nil {
+		errorResponse(ctx, err)
+		return
+	}
 
-	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: tHeaders.X_request_id})
+	ctx.JSON(http.StatusOK, dto.ServiceResponseDto{
+		Service:      "middle",
+		X_request_id: tHeaders.X_request_id,
+		Nested:       nestedResponseDto,
+	})
 }
 
 func errorResponse(ctx *gin.Context, err error) {
