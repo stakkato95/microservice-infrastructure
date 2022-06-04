@@ -2,9 +2,12 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/service-engineering-microservice-infrastructure/middle/dto"
 )
 
@@ -34,6 +37,15 @@ func (h *telemetryHeaders) ToHeaders() http.Header {
 }
 
 func (h *Handler) getRequest(ctx *gin.Context) {
+	headers := http.Header{}
+
+	for key, val := range ctx.Request.Header {
+		if strings.ToLower(key)[0] == 'x' {
+			headers.Set(key, val[0])
+		}
+	}
+	logger.Info(fmt.Sprintf("%v", headers))
+
 	tHeaders := telemetryHeaders{}
 
 	if err := ctx.ShouldBindHeader(&tHeaders); err != nil {
@@ -45,7 +57,7 @@ func (h *Handler) getRequest(ctx *gin.Context) {
 		errorResponse(ctx, err)
 		return
 	}
-	req.Header = tHeaders.ToHeaders()
+	req.Header = headers
 
 	var res *http.Response
 	res, err = http.DefaultClient.Do(req)
