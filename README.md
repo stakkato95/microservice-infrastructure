@@ -15,3 +15,14 @@ https://medium.com/@the.real.yushuf/propagate-trace-headers-with-istio-grpc-http
 
 https://rakyll.medium.com/context-propagation-over-http-in-go-d4540996e9b0
 ========================================================================
+
+
+========================================================================
+canary
+========================================================================
+https://deliverybot.dev/2019/09/14/safe-and-automation-friendly-canary-deployments-with-helm/#:~:text=Safe%20and%20automation%20friendly%20canary%20deployments%20with%20Helm,only%20exposing%20it%20to%20a%20subset%20of%20traffic.
+
+https://github.com/deliverybot/helm/blob/master/charts/app/templates/deployment.yaml
+
+https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a
+========================================================================
