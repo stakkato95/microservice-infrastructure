@@ -13,7 +13,7 @@ spec:
   - host: localhost
     http:
       paths:
-      - path: /frontend/debug(/|$)(.*)
+      - path: /frontend(/|$)(.*)
         pathType: Prefix
         backend:
           service:

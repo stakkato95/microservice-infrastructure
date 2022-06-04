@@ -6,7 +6,7 @@
         },
         "k8s": {
             "port": "80",
-            "pathPrefix": "/tweets/debug"
+            "pathPrefix": "/frontend"
         }
     }
 }

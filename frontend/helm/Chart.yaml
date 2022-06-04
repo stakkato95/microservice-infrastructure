@@ -1,5 +1,5 @@
 apiVersion: v2
-name: service-engineering-microservice-infrastructure/frontend
+name: microservice-infrastructure-frontend
 description: A Helm chart for a simple service
 
 home: https://github.com/stakkato95/service-engineering-simple-twitter
