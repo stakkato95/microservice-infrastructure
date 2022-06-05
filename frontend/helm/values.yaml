@@ -6,9 +6,6 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-nameOverride: ""
-fullnameOverride: ""
-
 service:
   type: ClusterIP
   http:

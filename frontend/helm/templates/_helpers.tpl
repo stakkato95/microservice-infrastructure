@@ -11,7 +11,6 @@ Common labels
 {{- define "helm.labels" -}}
 helm.sh/chart: {{ include "helm.chart" . }}
 {{ include "helm.matchLabels" . }}
-app.kubernetes.io/version: {{ .Values.app.version | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

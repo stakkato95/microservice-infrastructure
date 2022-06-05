@@ -7,6 +7,16 @@ https://github.com/stakkato95/gin-propagate-xheaders
 
 https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a
 
+https://istio.io/latest/docs/ops/deployment/requirements/
+
+https://istio.io/latest/docs/reference/config/analysis/ist0118/
+
+
+ISTIO UNGÜLTIGE VERSIONNAMEN
+0.1.0
+v0.1.0
+0_1_0
+v0_1_0
 
 ========================================================================
 grpc context propagation
@@ -15,6 +25,10 @@ https://medium.com/@the.real.yushuf/propagate-trace-headers-with-istio-grpc-http
 
 https://rakyll.medium.com/context-propagation-over-http-in-go-d4540996e9b0
 ========================================================================
+
+
+
+
 
 
 ========================================================================
