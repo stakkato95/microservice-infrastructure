@@ -65,4 +65,8 @@ https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule
 
 Istio Gateway == Envoy Edge Proxy
 
+Istio dark release
 
+Istio fault injection
+1 first show in UI
+2 was ist Chaos Engineering?

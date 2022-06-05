@@ -18,6 +18,11 @@ spec:
     - headers:
         X-New-Frontend:
           exact: "100500"
+    fault:
+      delay:
+        percentage:
+          value: 100.0
+        fixedDelay: 3s
     route:
     - destination:
         # it could be completely other service
