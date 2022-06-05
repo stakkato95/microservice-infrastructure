@@ -64,3 +64,5 @@ Load Balancing based on header
 https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.
 
 Istio Gateway == Envoy Edge Proxy
+
+

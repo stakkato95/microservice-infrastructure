@@ -13,6 +13,17 @@ spec:
   # name of istio gateway ressource
   - ingress-gateway
   http:
+  - name: canary-dark-release
+    match:
+    - headers:
+        X-New-Frontend:
+          exact: "100500"
+    route:
+    - destination:
+        # it could be completely other service
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.version }}
+      weight: {{ .Values.release.weight.new }}
   - route:
     - destination:
         # it could be completely other service
