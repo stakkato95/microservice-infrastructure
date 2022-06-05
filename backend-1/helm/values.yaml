@@ -15,11 +15,3 @@ service:
   http:
     name: http
     port: 80
-
-ingress:
-  enabled: true
-
-release:
-  weight:
-    old: 90
-    new: 10

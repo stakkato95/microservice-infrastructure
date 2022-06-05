@@ -1,0 +1,1 @@
+helm uninstall backend-1-canary

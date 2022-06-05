@@ -1,0 +1,16 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  host: {{ .Chart.Name }}.default.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        useSourceIp: true
+  subsets:
+    - labels:
+        # selectors for pods
+        {{- include "helm.matchLabels" . | nindent 8 }}
+      name: {{ .Chart.Name }}-subset
