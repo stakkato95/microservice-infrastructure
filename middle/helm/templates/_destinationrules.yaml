@@ -1,0 +1,14 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  host: {{ .Chart.Name }}.default.svc.cluster.local
+  subsets:
+    - labels:
+        version: {{ .Values.app.version }}
+      name: {{ .Values.app.version }}
+    - labels:
+        version: {{ .Values.app.oldVersion }}
+      name: {{ .Values.app.oldVersion }}

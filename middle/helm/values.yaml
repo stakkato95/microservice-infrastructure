@@ -1,5 +1,6 @@
 app:
   version: "stable"
+  oldVersion: null
 
 image:
   repository: stakkato95/microservice-infrastructure-middle
@@ -11,3 +12,8 @@ service:
   http:
     name: http
     port: 80
+
+release:
+  weight:
+    old: 90
+    new: 10

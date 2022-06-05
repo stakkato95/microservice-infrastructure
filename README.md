@@ -18,6 +18,10 @@ v0.1.0
 0_1_0
 v0_1_0
 
+Virtual Services und Destination Rules
+kubectl get vs
+kubectl get dr
+
 ========================================================================
 grpc context propagation
 ========================================================================

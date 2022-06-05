@@ -6,7 +6,7 @@ mv helm/templates/service.yaml helm/templates/_service.yaml
 mv helm/templates/_virtualservice.yaml helm/templates/virtualservice.yaml
 mv helm/templates/_destinationrules.yaml helm/templates/destinationrules.yaml
 
-helm install middle-canary helm --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
+helm upgrade middle-canary helm --set release.weight.old=10 --set release.weight.new=90 --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
 
 # rollback renamings
 mv helm/templates/_service.yaml helm/templates/service.yaml
