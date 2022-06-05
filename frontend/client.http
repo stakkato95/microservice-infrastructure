@@ -1,4 +1,5 @@
 GET http://localhost:{{port}}{{pathPrefix}}/request
+X-Api-User-Id: 5
 
 ###
 

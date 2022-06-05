@@ -35,9 +35,10 @@ func (h *Handler) getRequest(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ServiceResponseDto{
-		Service:      "middle",
-		X_request_id: xheaders["X-Request-Id"][0],
-		Nested:       nestedResponseDto,
+		Service:       "middle",
+		X_request_id:  xheaders["X-Request-Id"][0],
+		X_api_user_id: xheaders["X-Api-User-Id"][0],
+		Nested:        nestedResponseDto,
 	})
 }
 

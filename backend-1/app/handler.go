@@ -14,8 +14,9 @@ type Handler struct {
 func (h *Handler) getRequest(ctx *gin.Context) {
 	xheaders := middleware.GetXHeaders(ctx)
 	ctx.JSON(http.StatusOK, dto.ServiceResponseDto{
-		Service:      "backend-1",
-		X_request_id: xheaders["X-Request-Id"][0],
+		Service:       "backend-1",
+		X_request_id:  xheaders["X-Request-Id"][0],
+		X_api_user_id: xheaders["X-Api-User-Id"][0],
 	})
 }
 

@@ -8,7 +8,7 @@ spec:
   trafficPolicy:
     loadBalancer:
       consistentHash:
-        useSourceIp: true
+        httpHeaderName: "x-api-user-id"
   subsets:
     - labels:
         # selectors for pods

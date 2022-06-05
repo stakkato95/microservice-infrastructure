@@ -10,7 +10,8 @@ type MiddleResponse struct {
 }
 
 type ServiceResponseDto struct {
-	Service      string      `json:"service,omitempty"`
-	X_request_id string      `json:"x-request-id,omitempty"`
-	Nested       interface{} `json:"nested,omitempty"`
+	Service       string      `json:"service,omitempty"`
+	X_request_id  string      `json:"x-request-id,omitempty"`
+	X_api_user_id string      `json:"x-api-user-id,omitempty"`
+	Nested        interface{} `json:"nested,omitempty"`
 }
