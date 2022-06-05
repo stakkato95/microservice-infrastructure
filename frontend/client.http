@@ -1,6 +1,7 @@
-GET http://localhost:{{port}}{{pathPrefix}}/request
+# GET http://localhost:{{port}}{{pathPrefix}}/request
+# X-Api-User-Id: 5
+
+# ###
+
+GET http://localhost/request
 X-Api-User-Id: 5
-
-###
-
-GET http://localhost:31313/request

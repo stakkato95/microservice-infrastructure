@@ -54,7 +54,13 @@ Monitoring
 2 jaeger
 3 grafana
 
-Virtual Service
+Virtual Service canary rollout
 1 über UI
 2 mein middle-service-rollout skript
 3 YAML in Kiali UI bearbeiten
+
+Load Balancing based on header
+1 YAML only
+https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.
+
+Istio Gateway == Envoy Edge Proxy
