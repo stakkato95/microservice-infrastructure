@@ -42,11 +42,6 @@ https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-6693
 ========================================================================
 
 
-Virtual Service canary rollout
-1 über UI
-2 mein middle-service-rollout skript
-3 YAML in Kiali UI bearbeiten
-
 Load Balancing based on header
 1 YAML only
 https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.
@@ -129,9 +124,9 @@ Mit einem Service Mesh wie Istio haben DevOps-Teams die notwendigen Tools an der
 
 Istio bietet folgende Fuktionalität (keine ausführliche Liste):
 - Telemetriedaten
-- Traffic Management / Canary Deployment
+- Traffic Management (Canary Deployments)
 - Load Balancing
-- API Gateway
+- API Gateway (Canary Deployments)
 - Dark Releases
 - Fault Injection (in diesem Projekt nicht betrachtet)
 - Circuit Breaker (in diesem Projekt nicht betrachtet)
@@ -163,7 +158,7 @@ Es ist ersichtlich, dass Istio ein komplettes Monitoring Stack mit sich installi
 
 ![9_grafana_2](/images/9_grafana_2.jpg)
 
-Out-of-the-Box kann Prometheus / Jaeger Spanes zu Traces nicht zusamenstellen. Dafür muss ein Service entsprechend instrumentiert werden, d.h. die dafür nötigten Headers bei jeder Anfrage mitgeben. Laut der  [Istio Dokumentation](https://istio.io/latest/about/faq/distributed-tracing/#how-to-support-tracing) müssen folgende Headers weitergeleitet werden:
+Out-of-the-Box kann Prometheus / Jaeger Spanes zu Traces nicht zusamenstellen. Dafür muss ein Service entsprechend instrumentiert werden, d.h. die dafür nötigten Headers bei jeder weiteren Anfrage mitgeben. Laut der  [Istio Dokumentation](https://istio.io/latest/about/faq/distributed-tracing/#how-to-support-tracing) müssen folgende Headers weitergeleitet werden:
 
 - x-request-id
 - x-b3-traceid
@@ -210,11 +205,11 @@ func GetXHeaders(ctx *gin.Context) http.Header {
 Istio bietet zwei Wege, um Canary Deployments zu implementieren:
 
 - über UI
-- mittels YAMLs
+- mittels YAML Konfigurationsdateien
 
 Über UI kann ein Canary Deployment in wenigen Schritten umgesetzt werden:
 
-- Zuerst müssen zwei Deployments mit den gleichen `app` und unterschiedlichen `version` Labels deployet werden. Außerdem muss noch ein Service deployet werden, bei dem `app` Label mit den Labels des Deployments übereinstimmt.
+- Zuerst müssen zwei Deployments mit den gleichen `app` und unterschiedlichen `version` Labels deployet werden. Außerdem muss noch ein Service deployet werden, bei dem `app` Label mit den Labels des Deployments übereinstimmt (ein normaler Kubernetes Service).
 
 ```yaml
 apiVersion: apps/v1
@@ -246,11 +241,11 @@ spec:
               protocol: TCP
 ```
 
-- Man findet diese zwei Deployments auf der Kiali Dashboard. Versionierte Deployments werden mittels eines Services gruppiert.
+- In Falls des Middle Services, findet man diese zwei Deployments auf der Kiali Dashboard. Versionierte Deployments werden mittels eines Services gruppiert.
 
 ![10_canary_1](/images/10_canary_1.jpg)
 
-- Dann kommt man auf die Seite des Services und in Actions Dropdown wählt `Create Weighted Routing`
+- Dann kommt man auf die Seite des Services und in `Actions` Dropdown wählt `Create Weighted Routing`
 
 ![11_canary_2](/images/11_canary_2.jpg)
 
@@ -258,7 +253,7 @@ spec:
 
 ![12_canary_3](/images/12_canary_3.jpg)
 
-Dasselbe kann auch mittels YAMLs Konfigurationen erreicht werden:
+Dasselbe kann auch mittels YAML Konfigurationen erreicht werden. Dafür sind VirtualService und eine DestinationRule nötig (unten sind nicht kompilierte Helm Templates zu sehen):
 
 ```yaml
 kind: VirtualService
@@ -298,7 +293,56 @@ spec:
       name: {{ .Values.app.oldVersion }}
 ```
 
-Wenn im Cluster eine instanz von Version 1 und eine Instanz von Version 2 existieren, dann bekommt das erste Deployment (genauso wie das zweite) 50% aller Anfragen. Wenn es 4 Instanzen vom ersten und 1 Instanz vom zweiten Deployment gäbe, wäre das ein 80-20 Release. Da man mehrere Deployment Instanzen (Pods) starten muss, um ein gewichtetes Release umzusetzen, ist es sehr umständlich.
+Wenn im Cluster eine instanz von Version 1 und eine Instanz von Version 2 nebeneinander laufen, dann arbeitet das erste Deployment (genauso wie das zweite) 50% aller Anfragen ab. Wenn es z.B. 4 Instanzen vom ersten und 1 Instanz vom zweiten Deployment gäbe, wäre das ein 80-20 Release. Da man in diesem Fall mehrere Deployment Instanzen (Pods) starten muss, um ein gewichtetes Release umzusetzen, ist es sehr umständlich (reine verschwendung der Rechenleistung furch Instanzierung mehrerer Pods).
+
+Die Canary Version des Middle Services wurde in diesem Projekt allerdings nach dem effizienterem Istio Prinzip ausgerollt. Auf der Kiali UI werden zwei nebeneinander laufende Versionen des Middle Services folgendermaßen dargestellt:
+
+![13_canary_4](/images/13_canary_4.jpg)
+
+Wenn mehrere Anfragen an Middle Service nacheinander geschickt werden, sieht man, dass die Mehrheit aller Anfragen von der `stable` Version abgearbeitet wird. Das liegt an den Werten, die in `values.yaml` des Helm Cahrts definiert sind. Diese Werte werden beim Ausrollen des Canary Deployments überschrieben:
+
+```yaml
+app:
+  version: "stable"
+  oldVersion: null
+
+release:
+  weight:
+    old: 90
+    new: 10
+```
+
+Canary Release des Middle Services wird mittels Helm installiert. 90% aller Anfragen (auch wenn es auf dem Screenshot unten nicht genau 90% sind) werden immer noch von Stable Version abgearbeitet:
+
+`middle-canary-install.ps1`
+```powershell
+helm install middle-canary helm --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
+```
+
+![14_canary_5](/images/14_canary_5.jpg)
+
+Wenn man rollout Skript ausführt, werden 90% aller Anfragen von der Canary Version abgearbeitet. Das sieht man auch an den Ergebnissen des Load-Testing Skripts `middle-canary-test.ps1`: 
+
+`middle-canary-rollout.ps1`
+```powershell
+helm upgrade middle-canary helm --set release.weight.old=10 --set release.weight.new=90 --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
+```
+
+![15_canary_6](/images/15_canary_6.jpg)
+
+![16_canary_7](/images/16_canary_7.jpg)
+
+Im Laufe der Arbeit an diesem Projekt wurde folgende Besonderheit von Istio entdeckt. Istio Erlaubt keine numerische Werte für `version` Label. Mit diesen Werten konnte Canary Release nicht konfiguriert werden:
+
+- 0.1.0
+- v0.1.0
+- 0_1_0
+- v0_1_0
+
+Deswegen wurden `stable` und `canary` als Releasenamen gewählt.
+
+
+### Load Balancing
 
 
 
@@ -306,9 +350,7 @@ Wenn im Cluster eine instanz von Version 1 und eine Instanz von Version 2 existi
 
 
 
-
-
-
+ 
 
 
 
