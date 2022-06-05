@@ -401,6 +401,78 @@ while(1) {
 
 ### API Gateway (Canary Deployments)
 
+Da Istio größtenteils auf Basis Envoy aufgebaut wurde, entspricht Istio Gateway dem Envoy Edge Proxy. Istio bietet im Vergleich mit anderen API Gateways / IngressControllers keine extra Funktionen, außer Fehler-Injezierung (zwecks Chaos Engineering) und Canary Deployments (intelligentes Load Balancing und Traffic Routing). Canary Release, das in diesem Abschnitt umgesetzt wurde, kann auch ohne Istio implementiert werden, allerdings mit einem höheren Aufwand (hauptsächlich Aufgrung der Notwendigkeit mehr Pods laufen zu lassen, um Canary Release richtig zu implementieren).
+
+Canary Release des Frontend Services funktioniert 1-zu-1 wie der Release des Middle Services mit einem einzigen Unterschied, dass Frontend Service am Istio API Gateway hängt. Dafür muss zuierst ein Istio API Gateway installiert werden und dann der Service. Alle diese Schritte erfolgen automatisch mit dem Ausrollen des Canary Releases des Frontend Services.
+
+```yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ingress-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+```
+
+```yaml
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - route:
+    - destination:
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.version }}
+      weight: {{ .Values.release.weight.new }}
+    - destination:
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.oldVersion }}
+      weight: {{ .Values.release.weight.old }}
+
+```
+
+Canary Release des Frontend Services kann auch in zwei Schritten ausgerollt werden, und zwar
+
+- zuerst 90% `stable` und 10% `canary` (`frontend-canary-install.ps1`)
+- und später 10% `stable` und 90% `canary` (`frontend-canary-rollout.ps1`)
+
+`frontend-canary-install.ps1`
+```powershell
+helm install frontend-canary helm --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
+```
+
+`frontend-canary-install.ps1`
+```powershell
+helm upgrade frontend-canary helm --set release.weight.old=10 --set release.weight.new=90 --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
+```
+
+Der Mesh aller Services (inklusive Canary Releases der Middle und Backend Services) schaut dann so aus:
+
+![21_gateway_kiali](/images/21_gateway_kiali.jpg)
+
+Wenn alle Helm Charts installiert werden, dann sieht die Ausgabe von `helm ls` so aus:
+
+![22_gateway_helm](/images/22_gateway_helm.jpg)
+
+
+
+
+
 
 
 
