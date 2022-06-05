@@ -1,3 +1,7 @@
+app:
+  version: "stable"
+  oldVersion: null
+
 image:
   repository: stakkato95/microservice-infrastructure-backend-1
   pullPolicy: Always
@@ -14,3 +18,8 @@ service:
 
 ingress:
   enabled: true
+
+release:
+  weight:
+    old: 90
+    new: 10
