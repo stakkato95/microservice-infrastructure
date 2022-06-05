@@ -5,14 +5,17 @@ metadata:
   namespace: default
 spec:
   hosts:
+    # fully qualified DNS service name
     - {{ .Chart.Name }}.default.svc.cluster.local
   http:
     - route:
         - destination:
+            # it could be completely other service
             host: {{ .Chart.Name }}.default.svc.cluster.local
             subset: {{ .Values.app.version }}
           weight: {{ .Values.release.weight.new }}
         - destination:
+            # it could be completely other service
             host: {{ .Chart.Name }}.default.svc.cluster.local
             subset: {{ .Values.app.oldVersion }}
           weight: {{ .Values.release.weight.old }}

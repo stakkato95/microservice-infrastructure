@@ -44,3 +44,17 @@ https://github.com/deliverybot/helm/blob/master/charts/app/templates/deployment.
 
 https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a
 ========================================================================
+
+
+
+
+
+Monitoring
+1 meine Bibliothek
+2 jaeger
+3 grafana
+
+Virtual Service
+1 über UI
+2 mein middle-service-rollout skript
+3 YAML in Kiali UI bearbeiten
