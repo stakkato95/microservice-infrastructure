@@ -7,17 +7,6 @@ https://istio.io/latest/docs/ops/deployment/requirements/
 
 https://istio.io/latest/docs/reference/config/analysis/ist0118/
 
-
-ISTIO UNGÜLTIGE VERSIONNAMEN
-0.1.0
-v0.1.0
-0_1_0
-v0_1_0
-
-Virtual Services und Destination Rules
-kubectl get vs
-kubectl get dr
-
 ========================================================================
 grpc context propagation
 ========================================================================
@@ -200,7 +189,7 @@ func GetXHeaders(ctx *gin.Context) http.Header {
 ```
 
 
-### Traffic Management / Canary Deployment
+### Traffic Management (Canary Deployment)
 
 Istio bietet zwei Wege, um Canary Deployments zu implementieren:
 
@@ -344,13 +333,78 @@ Deswegen wurden `stable` und `canary` als Releasenamen gewählt.
 
 ### Load Balancing
 
+Load Balancing wurde bei Backend Service mittels Hashing des Wertes eines Headers Implementiert.  Der Header, auf dessen Basis Load Balancing geschieht, ist `x-api-user-id`. Die Konfiguration wurde im DestinationRule YAML beschrieben. DestinationRule benötigt natürlich auch einen VirtualService.
+
+```yaml
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  host: {{ .Chart.Name }}.default.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpHeaderName: "x-api-user-id"
+  subsets:
+    - labels:
+        {{- include "helm.matchLabels" . | nindent 8 }}
+      name: {{ .Chart.Name }}-subset
+```
+
+```yaml
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  hosts:
+    - {{ .Chart.Name }}.default.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: {{ .Chart.Name }}.default.svc.cluster.local
+            subset: {{ .Chart.Name }}-subset
+
+```
+
+Diese Konfiguration wird in Kiali so abgebildet:
+
+![17_load_balancing_kiali](/images/17_load_balancing_kiali.jpg)
+
+Zum Testen wurden zwei Skripts geschrieben, die unterschiedliche Werte des `x-api-user-id` Headers mitschicken und deren Anfragen dadurch nur von der neuen oder von der alten Version des Backend Services abgearbeitet werden. 
+
+![18_load_balancing_install](/images/18_load_balancing_install.jpg)
+
+`backend-1-canary-test-1.ps1`
+```powershell
+while(1) {
+    curl http://localhost/request -sS -H "X-Api-User-Id: 4" | jq ".nested.nested.service"    
+    sleep(0.5);
+}
+```
+
+![19_load_balancing_test_canary](/images/19_load_balancing_test_canary.jpg)
+
+`backend-1-canary-test-2.ps1`
+```powershell
+while(1) {
+    curl http://localhost/request -sS -H "X-Api-User-Id: 3" | jq ".nested.nested.service"    
+    sleep(0.5);
+}
+```
+
+![20_load_balancing_test_stable](/images/20_load_balancing_test_stable.jpg)
+
+
+### API Gateway (Canary Deployments)
 
 
 
 
 
-
- 
 
 
 
