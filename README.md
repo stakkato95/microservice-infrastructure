@@ -1,70 +1,3 @@
-# microservice-infrastructure
-Playground to try out diferent microservice infrastructure components
-
-https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a
-
-https://istio.io/latest/docs/ops/deployment/requirements/
-
-https://istio.io/latest/docs/reference/config/analysis/ist0118/
-
-========================================================================
-grpc context propagation
-========================================================================
-https://medium.com/@the.real.yushuf/propagate-trace-headers-with-istio-grpc-http-1-1-go-73e7f5382643
-
-https://rakyll.medium.com/context-propagation-over-http-in-go-d4540996e9b0
-========================================================================
-
-
-
-
-
-
-========================================================================
-canary
-========================================================================
-https://deliverybot.dev/2019/09/14/safe-and-automation-friendly-canary-deployments-with-helm/#:~:text=Safe%20and%20automation%20friendly%20canary%20deployments%20with%20Helm,only%20exposing%20it%20to%20a%20subset%20of%20traffic.
-
-https://github.com/deliverybot/helm/blob/master/charts/app/templates/deployment.yaml
-
-https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a
-========================================================================
-
-
-Load Balancing based on header
-1 YAML only
-https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Microservice-Infrastruktur (Kaliaha Artsiom, s2110455009)
 
 Das Ziel dieses Projekts bestand darin, unterschiedliche Technologien für die Microservice-Infrastruktur auszuprobieren und zu evaluieren.
@@ -140,7 +73,7 @@ Es ist ersichtlich, dass Istio ein komplettes Monitoring Stack mit sich installi
 
 ![9_grafana_2](/images/9_grafana_2.jpg)
 
-Out-of-the-Box kann Prometheus / Jaeger Spanes zu Traces nicht zusamenstellen. Dafür muss ein Service entsprechend instrumentiert werden, d.h. die dafür nötigten Headers bei jeder weiteren Anfrage mitgeben. Laut der  [Istio Dokumentation](https://istio.io/latest/about/faq/distributed-tracing/#how-to-support-tracing) müssen folgende Headers weitergeleitet werden:
+Out-of-the-Box kann Prometheus / Jaeger Spans zu Traces nicht zusamenstellen. Dafür muss ein Service entsprechend instrumentiert werden, d.h. die dafür nötigten Headers bei jeder weiteren Anfrage mitgeben. Laut der  [Istio Dokumentation](https://istio.io/latest/about/faq/distributed-tracing/#how-to-support-tracing) müssen folgende Headers weitergeleitet werden:
 
 - x-request-id
 - x-b3-traceid
@@ -223,7 +156,7 @@ spec:
               protocol: TCP
 ```
 
-- In Falls des Middle Services, findet man diese zwei Deployments auf der Kiali Dashboard. Versionierte Deployments werden mittels eines Services gruppiert.
+- Im Falle des Middle Services, findet man diese zwei Deployments auf der Kiali Dashboard. Versionierte Deployments werden mittels eines Services gruppiert.
 
 ![10_canary_1](/images/10_canary_1.jpg)
 
@@ -275,9 +208,9 @@ spec:
       name: {{ .Values.app.oldVersion }}
 ```
 
-Wenn im Cluster eine instanz von Version 1 und eine Instanz von Version 2 nebeneinander laufen, dann arbeitet das erste Deployment (genauso wie das zweite) 50% aller Anfragen ab. Wenn es z.B. 4 Instanzen vom ersten und 1 Instanz vom zweiten Deployment gäbe, wäre das ein 80-20 Release. Da man in diesem Fall mehrere Deployment Instanzen (Pods) starten muss, um ein gewichtetes Release umzusetzen, ist es sehr umständlich (reine verschwendung der Rechenleistung furch Instanzierung mehrerer Pods).
+Wenn im Cluster eine instanz von Version 1 und eine Instanz von Version 2 nebeneinander laufen, dann arbeitet das erste Deployment (genauso wie das zweite) 50% aller Anfragen ab. Wenn es z.B. 4 Instanzen vom ersten und 1 Instanz vom zweiten Deployment gäbe, wäre das ein 80-20 Release. Da man in diesem Fall mehrere Deployment Instanzen (Pods) starten muss, um ein gewichtetes Release umzusetzen, ist es sehr umständlich (reine verschwendung der Rechenleistung durch Instanzierung mehrerer Pods).
 
-Die Canary Version des Middle Services wurde in diesem Projekt allerdings nach dem effizienterem Istio Prinzip ausgerollt. Auf der Kiali UI werden zwei nebeneinander laufende Versionen des Middle Services folgendermaßen dargestellt:
+Die Canary Version des Middle Services wurde in diesem Projekt allerdings nach dem effizienteren Istio Prinzip ausgerollt. Auf der Kiali UI werden zwei nebeneinander laufende Versionen des Middle Services folgendermaßen dargestellt:
 
 ![13_canary_4](/images/13_canary_4.jpg)
 
@@ -303,7 +236,7 @@ helm install middle-canary helm --set app.version="canary" --set app.oldVersion=
 
 ![14_canary_5](/images/14_canary_5.jpg)
 
-Wenn man rollout Skript ausführt, werden 90% aller Anfragen von der Canary Version abgearbeitet. Das sieht man auch an den Ergebnissen des Load-Testing Skripts `middle-canary-test.ps1`: 
+Wenn man Rollout-Skript ausführt, werden 90% aller Anfragen von der Canary Version abgearbeitet. Das sieht man auch an den Ergebnissen des Load-Testing Skripts `middle-canary-test.ps1`: 
 
 `middle-canary-rollout.ps1`
 ```powershell
@@ -314,7 +247,7 @@ helm upgrade middle-canary helm --set release.weight.old=10 --set release.weight
 
 ![16_canary_7](/images/16_canary_7.jpg)
 
-Im Laufe der Arbeit an diesem Projekt wurde folgende Besonderheit von Istio entdeckt. Istio Erlaubt keine numerische Werte für `version` Label. Mit diesen Werten konnte Canary Release nicht konfiguriert werden:
+Im Laufe der Arbeit an diesem Projekt wurde folgende Besonderheit von Istio entdeckt. Istio erlaubt keine numerische Werte für `version` Label. Mit diesen Werten konnte Canary Release nicht konfiguriert werden:
 
 - 0.1.0
 - v0.1.0
@@ -394,7 +327,7 @@ while(1) {
 
 ### API Gateway (Canary Deployments)
 
-Da Istio größtenteils auf Basis Envoy aufgebaut wurde, entspricht Istio Gateway dem Envoy Edge Proxy. Istio bietet im Vergleich mit anderen API Gateways / IngressControllers keine extra Funktionen, außer Fehler-Injezierung (zwecks Chaos Engineering) und Canary Deployments (intelligentes Load Balancing und Traffic Routing). Canary Release, das in diesem Abschnitt umgesetzt wurde, kann auch ohne Istio implementiert werden, allerdings mit einem höheren Aufwand (hauptsächlich Aufgrung der Notwendigkeit mehr Pods laufen zu lassen, um Canary Release richtig zu implementieren).
+Da Istio größtenteils auf Basis Envoy aufgebaut wurde, entspricht Istio Gateway dem Envoy Edge Proxy. Istio bietet im Vergleich mit anderen API Gateways / IngressControllers keine extra Funktionen, außer Fehler-Injezierung (zwecks Chaos Engineering) und Canary Releases (intelligentes Load Balancing und Traffic Routing). Canary Release, das in diesem Abschnitt umgesetzt wurde, kann auch ohne Istio implementiert werden, allerdings mit einem höheren Aufwand (hauptsächlich Aufgrung der Notwendigkeit mehr Pods laufen zu lassen, um die richtigen Gewichte für Canary Release zu finden).
 
 Canary Release des Frontend Services funktioniert 1-zu-1 wie der Release des Middle Services mit einem einzigen Unterschied, dass Frontend Service am Istio API Gateway hängt. Dafür muss zuierst ein Istio API Gateway installiert werden und dann der Service. Alle diese Schritte erfolgen automatisch mit dem Ausrollen des Canary Releases des Frontend Services.
 
@@ -449,7 +382,7 @@ Canary Release des Frontend Services kann auch in zwei Schritten ausgerollt werd
 helm install frontend-canary helm --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
 ```
 
-`frontend-canary-install.ps1`
+`frontend-canary-rollout.ps1`
 ```powershell
 helm upgrade frontend-canary helm --set release.weight.old=10 --set release.weight.new=90 --set app.version="canary" --set app.oldVersion="stable" --set image.tag=canary
 ```
@@ -525,3 +458,19 @@ Im vorliegenden Projekt wurden folgende Funktionen von Istio ausprobiert:
 - API Gateway
 - Dark Releases mittels Header Matching
 - Mutual TLS
+
+### Links
+
+- [Canary deployments with helm](https://itnext.io/safe-and-automation-friendly-canary-deployments-with-helm-669394d2c48a) 
+
+- [Canary deployments with helm 2](https://deliverybot.dev/2019/09/14/safe-and-automation-friendly-canary-deployments-with-helm/#:~:text=Safe%20and%20automation%20friendly%20canary%20deployments%20with%20Helm,only%20exposing%20it%20to%20a%20subset%20of%20traffic.)
+
+- [Canary deployments with helm (deployment yaml)](https://github.com/deliverybot/helm/blob/master/charts/app/templates/deployment.yaml) 
+
+- [Istio application requirements](https://istio.io/latest/docs/ops/deployment/requirements/)
+
+- [Grpc context propagation in golang](https://medium.com/@the.real.yushuf/propagate-trace-headers-with-istio-grpc-http-1-1-go-73e7f5382643)
+
+- [Grpc context propagation in golang 2](https://rakyll.medium.com/context-propagation-over-http-in-go-d4540996e9b0)
+
+- [Load balancing based on header](https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.)
