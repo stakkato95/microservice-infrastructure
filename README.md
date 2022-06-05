@@ -35,7 +35,6 @@ Load Balancing based on header
 1 YAML only
 https://istio.io/v1.1/docs/reference/config/networking/v1alpha3/destination-rule/#:~:text=LoadBalancerSettings.ConsistentHashLB%20Consistent%20Hash-based%20load%20balancing%20can%20be%20used,balancing%20policy%20is%20applicable%20only%20for%20HTTP%20connections.
 
-Istio Gateway == Envoy Edge Proxy
 
 Istio dark release
 
@@ -468,6 +467,53 @@ Der Mesh aller Services (inklusive Canary Releases der Middle und Backend Servic
 Wenn alle Helm Charts installiert werden, dann sieht die Ausgabe von `helm ls` so aus:
 
 ![22_gateway_helm](/images/22_gateway_helm.jpg)
+
+
+### Dark Releases
+
+Ein Dark Release auf Basis Istio kann sehr einfach mittels Routing umgesetzt werden, der vom Inhalt eines Headers abhängt. Dark Release wurde in diesem Projekt im Frontend Service implementiert. So wenn ein Client eine Anfrage an Frontend mit dem Header `X-New-Frontend: 100500` schickt, wird die Ausführung der Anfrage um 3 Sekunden verzögert. 
+
+```yaml
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - name: canary-dark-release
+    match:
+    - headers:
+        X-New-Frontend:
+          exact: "100500"
+    fault:
+      delay:
+        percentage:
+          value: 100.0
+        fixedDelay: 3s
+    route:
+    - destination:
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.version }}
+      weight: {{ .Values.release.weight.new }}
+  - route:
+    - destination:
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.version }}
+      weight: {{ .Values.release.weight.new }}
+    - destination:
+        host: {{ .Chart.Name }}.default.svc.cluster.local
+        subset: {{ .Values.app.oldVersion }}
+      weight: {{ .Values.release.weight.old }}
+
+```
+
+
+
 
 
 
